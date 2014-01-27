@@ -8,18 +8,19 @@
 PLUGIN.Title = "HC STARTER KIT"
 PLUGIN.Description = "Provide optimized starter kits"
 
+PLUGIN.configFileName = "hc-starter-kits"
 -- *******************************************
 -- PLUGIN:Init()
 -- Called when the plugin is initialised
 -- *******************************************
 function PLUGIN:Init()
-  self.kitsRawData = util.GetDataFile("hc-starter-kits")
+  self.kitsRawData = util.GetDataFile(self.configFileName)
   if(self.kitsRawData:GetText() == "")then
     self:SetKitData()
   else
     self.kitsData = json.decode(self.kitsRawData:GetText())
       if (not self.kitsData) then
-        error("error parison JSON")
+        error("error parsing JSON")
         self:SetKitData()
       end
     end
@@ -49,7 +50,7 @@ function PLUGIN:SetKitData()
   self.kitsData["premium"][1]["name"] = "Stone Hatchet"
   self.kitsData["premium"][1]["amount"] = 1
   
-  self.kitsRawData = util.GetDataFile("hc-starter-kits")
+  self.kitsRawData = util.GetDataFile(self.configFileName)
   self.kitsRawData:SetText(json.encode(self.kitsData))
   self.kitsRawData:Save()
 end
