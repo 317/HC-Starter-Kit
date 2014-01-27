@@ -45,9 +45,9 @@ function PLUGIN:SetKitData()
   
   --Content definition of the premium kit
   self.kitsData["premium"] = {}
-  self.kitsData["basic"][1]={}
-  self.kitsData["basic"][1]["name"] = "Stone Hatchet"
-  self.kitsData["basic"][1]["amount"] = 1
+  self.kitsData["premium"][1]={}
+  self.kitsData["premium"][1]["name"] = "Stone Hatchet"
+  self.kitsData["premium"][1]["amount"] = 1
   
   self.kitsRawData = util.GetDataFile("hc-starter-kits")
   self.kitsRawData:SetText(json.encode(self.kitsData))
