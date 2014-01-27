@@ -1,4 +1,4 @@
-THM-Starter-Kit
+HC-Starter-Kit
 ===============
 
 An Oxide plugin for Rust. A better starter kit.
