@@ -69,6 +69,7 @@ function PLUGIN:GiveKit(netuser, cmd, args )
   if(self.kitsData["users"][playerID] == "")then
     self.kitsData["users"][playerID]={}
     --TODO: find TIMESTAMP equivalents in LUA
+   -- local currentTime = UnityEngine.Time.realtimeSinceStartup
     --self.kitsData["users"][playerID]["date_premium"] = NOW
     self.GivePremiumKit(netuser, cmd, args)
   else
