@@ -9,6 +9,7 @@ PLUGIN.Title = "HC STARTER KIT"
 PLUGIN.Description = "Provide optimized starter kits"
 
 PLUGIN.configFileName = "hc-starter-kits"
+PLUGIN.premium_delay=10
 -- *******************************************
 -- PLUGIN:Init()
 -- Called when the plugin is initialised
@@ -23,8 +24,10 @@ function PLUGIN:Init()
         error("error parsing JSON")
         self:SetKitData()
       end
-    end
-    
+  end
+  
+  self.AddChatCommand("starter", self.GiveKit)
+  
 end
 
 -- *******************************************
@@ -38,17 +41,19 @@ end
 function PLUGIN:SetKitData()
   self.kitsData = {}  
   
+  self.kitsData["users"] = {}
+  
   --Content definition of the basic kit
-  self.kitsData["basic"] = {}
-  self.kitsData["basic"][1]={}
-  self.kitsData["basic"][1]["name"] = "Raw Chicken Breast"
-  self.kitsData["basic"][1]["amount"] = 5
+  self.kitsData["kits"]["basic"] = {}
+  self.kitsData["kits"]["basic"][1]={}
+  self.kitsData["kits"]["basic"][1]["name"] = "Raw Chicken Breast"
+  self.kitsData["kits"]["basic"][1]["amount"] = 5
   
   --Content definition of the premium kit
-  self.kitsData["premium"] = {}
-  self.kitsData["premium"][1]={}
-  self.kitsData["premium"][1]["name"] = "Stone Hatchet"
-  self.kitsData["premium"][1]["amount"] = 1
+  self.kitsData["kits"]["premium"] = {}
+  self.kitsData["kits"]["premium"][1]={}
+  self.kitsData["kits"]["premium"][1]["name"] = "Stone Hatchet"
+  self.kitsData["kits"]["premium"][1]["amount"] = 1
   
   self.kitsRawData = util.GetDataFile(self.configFileName)
   self.kitsRawData:SetText(json.encode(self.kitsData))
@@ -60,7 +65,22 @@ end
 -- Function deciding which kit should be given
 -- *******************************************
 function PLUGIN:GiveKit(netuser, cmd, args )
-
+  playerID = rust.GetUserID(netuser)
+  if(self.kitsData["users"][playerID] == "")then
+    self.kitsData["users"][playerID]={}
+    --TODO: find TIMESTAMP equivalents in LUA
+    --self.kitsData["users"][playerID]["date_premium"] = NOW
+    self.GivePremiumKit(netuser, cmd, args)
+  else
+   -- if(self.kitsData["users"][playerID]["date_premium"]+self.premium_delay<NOW) then
+    --self.GivePremiumKit(netuser, cmd, args)
+     --self.kitsData["users"][playerID]["date_premium"] = NOW
+  -- else
+ -- self.GiveBasicKit(netuser, cmd, args)
+   --end
+  end
+  
+  
 end
 
 -- *******************************************
@@ -68,7 +88,7 @@ end
 -- Function which gives a premium kit
 -- *******************************************
 function PLUGIN:GivePremiumKit(netuser, cmd, args )
-
+  local pref = rust.InventorySlotPreference(InventorySlotKind.Default, false, InventorySlotKindFlags
 end
 
 -- *******************************************
