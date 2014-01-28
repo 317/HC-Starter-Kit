@@ -66,19 +66,18 @@ end
 -- *******************************************
 function PLUGIN:GiveKit(netuser, cmd, args )
   playerID = rust.GetUserID(netuser)
+  local NOW = UnityEngine.Time.realtimeSinceStartup
   if(self.kitsData["users"][playerID] == "")then
-    self.kitsData["users"][playerID]={}
-    --TODO: find TIMESTAMP equivalents in LUA
-   -- local currentTime = UnityEngine.Time.realtimeSinceStartup
-    --self.kitsData["users"][playerID]["date_premium"] = NOW
+    self.kitsData["users"][playerID]={}  
+    self.kitsData["users"][playerID]["date_premium"] = NOW
     self.GivePremiumKit(netuser, cmd, args)
   else
-   -- if(self.kitsData["users"][playerID]["date_premium"]+self.premium_delay<NOW) then
-    --self.GivePremiumKit(netuser, cmd, args)
-     --self.kitsData["users"][playerID]["date_premium"] = NOW
-  -- else
- -- self.GiveBasicKit(netuser, cmd, args)
-   --end
+    if(self.kitsData["users"][playerID]["date_premium"]+self.premium_delay<NOW) then
+      self.GivePremiumKit(netuser, cmd, args)
+      self.kitsData["users"][playerID]["date_premium"] = NOW
+	else
+	  self.GiveBasicKit(netuser, cmd, args)
+   end
   end
   
   
@@ -89,13 +88,24 @@ end
 -- Function which gives a premium kit
 -- *******************************************
 function PLUGIN:GivePremiumKit(netuser, cmd, args )
-  local pref = rust.InventorySlotPreference(InventorySlotKind.Default, false, InventorySlotKindFlags
+  local pref = rust.InventorySlotPreference( InventorySlotKind.Default, false, InventorySlotKindFlags.Belt )
+  local inv = netuser.playerClient.rootControllable.idMain:GetComponent( "Inventory" )
+  for i=1, #self.kitsData["kits"]["premium"] do
+    local item = self.kitsData["kits"]["premium"][i]
+	inv:AddItemAmount( item["name"], item["amount"], pref )
+  end
 end
+
 
 -- *******************************************
 -- PLUGIN:GiveKit()
 -- Function which give the basic kit
 -- *******************************************
 function PLUGIN:GiveBasicKit(netuser, cmd, args )
-
+  local pref = rust.InventorySlotPreference( InventorySlotKind.Default, false, InventorySlotKindFlags.Belt )
+  local inv = netuser.playerClient.rootControllable.idMain:GetComponent( "Inventory" )
+  for i=1, #self.kitsData["kits"]["basic"] do
+    local item = self.kitsData["kits"]["basic"][i]
+	inv:AddItemAmount( item["name"], item["amount"], pref )
+  end
 end
