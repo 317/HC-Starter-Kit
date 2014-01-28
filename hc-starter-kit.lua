@@ -8,25 +8,29 @@
 PLUGIN.Title = "HC STARTER KIT"
 PLUGIN.Description = "Provide optimized starter kits"
 
-PLUGIN.configFileName = "hc-starter-kits"
-PLUGIN.premium_delay=86400000 --24H
+PLUGIN.configFileName = "hc_starter_kits"
+PLUGIN.premium_delay = 86400 --24H
+PLUGIN.PlayerData = ""
 -- *******************************************
 -- PLUGIN:Init()
 -- Called when the plugin is initialised
 -- *******************************************
 function PLUGIN:Init()
-  self.kitsRawData = util.GetDataFile(self.configFileName)
-  if(self.kitsRawData:GetText() == "")then
-    self:SetKitData()
-  else
-    self.kitsData = json.decode(self.kitsRawData:GetText())
-      if (not self.kitsData) then
-        error("error parsing JSON")
-        self:SetKitData()
-      end
-  end
-  
-  self.AddChatCommand("starter", self.GiveKit)
+	-- print(self.premium_delay)
+	
+	 self:SetKitData()
+  -- self.kitsRawData = util.GetDataFile(self.configFileName)
+ -- if(self.kitsRawData:GetText() == "")then
+   -- self:SetKitData()
+  -- else
+   -- self.kitsData = json.decode(self.kitsRawData:GetText())
+     -- if (not self.kitsData) then
+       -- error("error parsing JSON")
+       -- self:SetKitData()
+      -- end
+ -- end
+
+ self:AddChatCommand("starter", self.GiveKit)
   
 end
 
@@ -43,6 +47,7 @@ function PLUGIN:SetKitData()
   
   self.kitsData["users"] = {}
   
+  self.kitsData["kits"] = {}
   --Content definition of the basic kit
   self.kitsData["kits"]["basic"] = {}
   self.kitsData["kits"]["basic"][1]={}
@@ -55,9 +60,9 @@ function PLUGIN:SetKitData()
   self.kitsData["kits"]["premium"][1]["name"] = "Stone Hatchet"
   self.kitsData["kits"]["premium"][1]["amount"] = 1
   
-  self.kitsRawData = util.GetDataFile(self.configFileName)
-  self.kitsRawData:SetText(json.encode(self.kitsData))
-  self.kitsRawData:Save()
+  -- self.kitsRawData = util.GetDataFile(self.configFileName)
+  -- self.kitsRawData:SetText(json.encode(self.kitsData))
+  -- self.kitsRawData:Save()
 end
 
 -- *******************************************
@@ -65,18 +70,22 @@ end
 -- Function deciding which kit should be given
 -- *******************************************
 function PLUGIN:GiveKit(netuser, cmd, args )
-  playerID = rust.GetUserID(netuser)
-  local NOW = UnityEngine.Time.realtimeSinceStartup
-  if(self.kitsData["users"][playerID] == "")then
+  self.kitsData["users"] = {}
+
+	getRealtimeSinceStartup= util.GetStaticPropertyGetter( UnityEngine.Time, "realtimeSinceStartup" )
+	time_now = getRealtimeSinceStartup()
+
+  if(self.kitsData["users"][playerID] == nil)then
+
     self.kitsData["users"][playerID]={}  
-    self.kitsData["users"][playerID]["date_premium"] = NOW
+    self.kitsData["users"][playerID]["date_premium"] = time_now
     self.GivePremiumKit(netuser, cmd, args)
   else
-    if(self.kitsData["users"][playerID]["date_premium"]+self.premium_delay<NOW) then
-      self.GivePremiumKit(netuser, cmd, args)
-      self.kitsData["users"][playerID]["date_premium"] = NOW
+    if(self.kitsData["users"][playerID]["date_premium"]+self.premium_delay<time_now) then
+      self:GivePremiumKit(netuser, cmd, args)
+      self.kitsData["users"][playerID]["date_premium"] = time_now
 	else
-	  self.GiveBasicKit(netuser, cmd, args)
+	  self:GiveBasicKit(netuser, cmd, args)
    end
   end
   
@@ -84,7 +93,7 @@ function PLUGIN:GiveKit(netuser, cmd, args )
 end
 
 -- *******************************************
--- PLUGIN:GiveKit()
+-- PLUGIN:GivePremiumKit()
 -- Function which gives a premium kit
 -- *******************************************
 function PLUGIN:GivePremiumKit(netuser, cmd, args )
@@ -98,7 +107,7 @@ end
 
 
 -- *******************************************
--- PLUGIN:GiveKit()
+-- PLUGIN:GiveBasicKit()
 -- Function which give the basic kit
 -- *******************************************
 function PLUGIN:GiveBasicKit(netuser, cmd, args )
