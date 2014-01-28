@@ -9,7 +9,7 @@ PLUGIN.Title = "HC STARTER KIT"
 PLUGIN.Description = "Provide optimized starter kits"
 
 PLUGIN.configFileName = "hc-starter-kits"
-PLUGIN.premium_delay=10
+PLUGIN.premium_delay=86400000 --24H
 -- *******************************************
 -- PLUGIN:Init()
 -- Called when the plugin is initialised
